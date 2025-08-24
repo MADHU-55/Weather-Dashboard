@@ -11,7 +11,7 @@
     <h1>Weather Dashboard</h1>
 
     <div class="search-box">
-      <input type="text" id="city-input" placeholder="Enter city name">
+      <input type="text" id="city-input" placeholder="Berlin">
       <button id="search-btn">Search</button>
     </div>
 
@@ -89,14 +89,17 @@
             document.getElementsByClassName("forecast-card")[i].getElementsByTagName("p")[1].innerHTML=Math.round(dayData.main.temp)+"°C";
         }
     }
-    document.getElementById("search-btn").addEventListener("click",function(){
-        const city=document.getElementById("city-input").value;
-        checkWeather(city);
+   document.getElementById("search-btn").addEventListener("click", function () {
+        const city = document.getElementById("city-input").value;
+        if (city.trim() !== "") {
+            checkWeather(city);
+            checkForecast(city);
+        }
     });
-       document.getElementById("search-btn").addEventListener("click",function(){
-        const city=document.getElementById("city-input").value;
-        checkForecast(city);
-    });
+    window.onload = function () {
+        checkWeather("Bangalore");
+        checkForecast("Bangalore");
+         };
 </script>
 </body>
 </html>
