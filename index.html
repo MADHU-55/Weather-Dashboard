@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Weather Dashboard</h1>
+
+    <div class="search-box">
+      <input type="text" id="city-input" placeholder="Enter city name">
+      <button id="search-btn">Search</button>
+    </div>
+
+    <div class="weather-card">
+      <h2 id="city-name">City Name</h2>
+      <p id="date">Date</p>
+      <div class="weather-info">
+        <img id="weather-icon" src="https://openweathermap.org/img/wn/01d@2x.png" alt="Weather Icon">
+        <h3 id="temperature">--°C</h3>
+      </div>
+      <p id="description">Weather description</p>
+      <p><strong>Humidity:</strong> <span id="humidity">--%</span></p>
+      <p><strong>Wind:</strong> <span id="wind">-- km/h</span></p>
+    </div>
+
+    <div class="forecast">
+      <h2>5-Day Forecast</h2>
+      <div class="forecast-cards">
+        <div class="forecast-card">
+          <p>Day 1</p>
+          <img src="https://openweathermap.org/img/wn/01d@2x.png" alt="icon">
+          <p>--°C</p>
+        </div>
+        <div class="forecast-card">
+          <p>Day 2</p>
+          <img src="https://openweathermap.org/img/wn/01d@2x.png" alt="icon">
+          <p>--°C</p>
+        </div>
+        <div class="forecast-card">
+          <p>Day 3</p>
+          <img src="https://openweathermap.org/img/wn/01d@2x.png" alt="icon">
+          <p>--°C</p>
+        </div>
+        <div class="forecast-card">
+          <p>Day 4</p>
+          <img src="https://openweathermap.org/img/wn/01d@2x.png" alt="icon">
+          <p>--°C</p>
+        </div>
+        <div class="forecast-card">
+          <p>Day 5</p>
+          <img src="https://openweathermap.org/img/wn/01d@2x.png" alt="icon">
+          <p>--°C</p>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+    const apiKey="97f893c6522b1bc4f57d2aa8bcd752a2";
+    const apiUrl="https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+    const forecastUrl="https://api.openweathermap.org/data/2.5/forecast?units=metric&q=";
+    async function checkWeather(city){
+        const response=await fetch(apiUrl+city+`&appid=${apiKey}`);
+        var data=await response.json();
+        console.log(data);
+        document.getElementById("city-name").innerHTML=data.name;
+        document.getElementById("temperature").innerHTML=Math.round(data.main.temp)+"°C";
+        document.getElementById("description").innerHTML=data.weather[0].description;
+        document.getElementById("humidity").innerHTML=data.main.humidity+"%";
+        document.getElementById("wind").innerHTML=data.wind.speed+" km/h";
+        document.getElementById("weather-icon").src="https://openweathermap.org/img/wn/"+data.weather[0].icon+"@2x.png";
+        const options={weekday:"long",year:"numeric",month:"long",day:"numeric"};
+        const today=new Date();
+        document.getElementById("date").innerHTML=today.toLocaleDateString(undefined,options);
+    }
+    async function checkForecast(city){
+        const response=await fetch(forecastUrl+city+`&appid=${apiKey}`);
+        var data=await response.json();
+        console.log(data);
+        for(let i=0;i<5;i++){
+            const dayData=data.list[i*8];
+            const options={weekday:"long"};
+            const date=new Date(dayData.dt_txt);
+            document.getElementsByClassName("forecast-card")[i].getElementsByTagName("p")[0].innerHTML=date.toLocaleDateString(undefined,options);
+            document.getElementsByClassName("forecast-card")[i].getElementsByTagName("img")[0].src="https://openweathermap.org/img/wn/"+dayData.weather[0].icon+"@2x.png";
+            document.getElementsByClassName("forecast-card")[i].getElementsByTagName("p")[1].innerHTML=Math.round(dayData.main.temp)+"°C";
+        }
+    }
+    document.getElementById("search-btn").addEventListener("click",function(){
+        const city=document.getElementById("city-input").value;
+        checkWeather(city);
+    });
+       document.getElementById("search-btn").addEventListener("click",function(){
+        const city=document.getElementById("city-input").value;
+        checkForecast(city);
+    });
+</script>
+</body>
+</html>
